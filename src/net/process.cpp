@@ -53,11 +53,11 @@ void coutBytes(char data[64]){
                 << "data[5]: " << (int)data[5] << "\n"
                 << "data[DEVICE_BYTE_POS_TIME]: " << (int)data[DEVICE_BYTE_POS_TIME] << "\n"
                 << "data[7]: " << (int)data[7] << "\n"
-                << "char data[8-63]: " << data + HEADER_SIZE << "\n";
+                << "char data[8-63]: " << data + SOCKET_HEADER_SIZE << "\n";
 }
 
 int handleSystemRequest(char data[64]){
-    char* text = (char*)data + HEADER_SIZE;
+    char* text = (char*)data + SOCKET_HEADER_SIZE;
     int test_int;
     coutBytes(data);
 
@@ -77,17 +77,17 @@ int handleKeyboardRequest(char data[64]){
     if (data[DEVICE_BYTE_POS_INPUT] == KEYBOARD_KEY){
         if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
             int key_code;
-            sscanf((char*)(data + HEADER_SIZE), "KEY %d", &key_code);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d", &key_code);
             keyPress(KEYBOARD_FD, key_code);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int key_code, key_delay;
-            sscanf((char*)(data + HEADER_SIZE), "KEY %d DEL %d", &key_code, &key_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d DEL %d", &key_code, &key_delay);
             keyPress(KEYBOARD_FD, key_code, key_delay);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
             int key_code, key_hold;
-            sscanf((char*)(data + HEADER_SIZE), "KEY %d HLD %d", &key_code, &key_hold);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d HLD %d", &key_code, &key_hold);
             keyHoldSecond(KEYBOARD_FD, key_code, key_hold);
         }        
     }
@@ -107,41 +107,41 @@ int handleMouseRequest(char data[64]){
     if (data[DEVICE_BYTE_POS_INPUT] == MOUSE_MOVE_X){
         if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
             int move_value;
-            sscanf((char*)(data + HEADER_SIZE), "MVX %d", &move_value);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MVX %d", &move_value);
             mouseMoveX(MOUSE_FD, move_value);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int move_value, move_delay;
-            sscanf((char*)(data + HEADER_SIZE), "MVX %d DEL %d", &move_value, &move_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MVX %d DEL %d", &move_value, &move_delay);
             mouseMoveX(MOUSE_FD, move_value, move_delay);
         }
     }
     else if (data[DEVICE_BYTE_POS_INPUT] == MOUSE_MOVE_Y){
         if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
             int move_value;
-            sscanf((char*)(data + HEADER_SIZE), "MVY %d", &move_value);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MVY %d", &move_value);
             mouseMoveY(MOUSE_FD, move_value);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int move_value, move_delay;
-            sscanf((char*)(data + HEADER_SIZE), "MVY %d DEL %d", &move_value, &move_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MVY %d DEL %d", &move_value, &move_delay);
             mouseMoveY(MOUSE_FD, move_value, move_delay);
         }
     }
     else if (data[DEVICE_BYTE_POS_INPUT] == MOUSE_BTN){
         if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
             int btn_code;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d", &btn_code);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d", &btn_code);
             mouseClickBTN(KEYBOARD_FD, btn_code);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int btn_code, btn_delay;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d DEL %d", &btn_code, &btn_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d DEL %d", &btn_code, &btn_delay);
             mouseClickBTN(KEYBOARD_FD, btn_code, btn_delay);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
             int btn_code, btn_hold;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d HLD %d", &btn_code, &btn_hold);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d HLD %d", &btn_code, &btn_hold);
             mouseHoldBTN(KEYBOARD_FD, btn_code, btn_hold);
         }  
     }
@@ -151,12 +151,12 @@ int handleMouseRequest(char data[64]){
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int btn_delay;
-            sscanf((char*)(data + HEADER_SIZE), "ML DEL %d", &btn_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "ML DEL %d", &btn_delay);
             mouseClickL(KEYBOARD_FD, btn_delay);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
             int  btn_hold;
-            sscanf((char*)(data + HEADER_SIZE), "ML HLD %d", &btn_hold);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "ML HLD %d", &btn_hold);
             mouseHoldL(KEYBOARD_FD, btn_hold);
         }
     }
@@ -166,12 +166,12 @@ int handleMouseRequest(char data[64]){
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int btn_delay;
-            sscanf((char*)(data + HEADER_SIZE), "MR DEL %d", &btn_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MR DEL %d", &btn_delay);
             mouseClickR(KEYBOARD_FD, btn_delay);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
             int btn_hold;
-            sscanf((char*)(data + HEADER_SIZE), "MR HLD %d", &btn_hold);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "MR HLD %d", &btn_hold);
             mouseHoldR(KEYBOARD_FD, btn_hold);
         }
     }
@@ -190,7 +190,7 @@ int handleControllerRequest(char data[64]){
 
     if (data[DEVICE_BYTE_POS_INPUT] == CNTRLR_TRIGGER){
         int value;
-        sscanf((char*)(data + HEADER_SIZE), "TRGR MV %d", &value);
+        sscanf((char*)(data + SOCKET_HEADER_SIZE), "TRGR MV %d", &value);
         if (data[DEVICE_BYTE_POS_MOD] == CNTRLR_MOD_OTHER){
             controllerPressTrigger(CONTROLLER_FD, value, true);
         }
@@ -200,7 +200,7 @@ int handleControllerRequest(char data[64]){
     }
     else if (data[DEVICE_BYTE_POS_INPUT] == CNTRLR_STICK_X){
         int value;
-        sscanf((char*)(data + HEADER_SIZE), "STICK MV X %d", &value);
+        sscanf((char*)(data + SOCKET_HEADER_SIZE), "STICK MV X %d", &value);
         if (data[DEVICE_BYTE_POS_MOD] == CNTRLR_MOD_OTHER){
             controllerMoveStickX(CONTROLLER_FD, value, true);
         }
@@ -211,7 +211,7 @@ int handleControllerRequest(char data[64]){
     }
     else if (data[DEVICE_BYTE_POS_INPUT] == CNTRLR_STICK_Y){
         int value;
-        sscanf((char*)(data + HEADER_SIZE), "STICK MV Y %d", &value);
+        sscanf((char*)(data + SOCKET_HEADER_SIZE), "STICK MV Y %d", &value);
         if (data[DEVICE_BYTE_POS_MOD] == CNTRLR_MOD_OTHER){
             controllerMoveStickY(CONTROLLER_FD, value, true);
         }
@@ -222,17 +222,17 @@ int handleControllerRequest(char data[64]){
     else if (data[DEVICE_BYTE_POS_INPUT] == CNTRLR_BTN){
         if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
             int btn_code;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d", &btn_code);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d", &btn_code);
             controllerClick(CONTROLLER_FD, btn_code);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
             int btn_code, btn_delay;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d DEL %d", &btn_code, &btn_delay);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d DEL %d", &btn_code, &btn_delay);
             controllerClick(CONTROLLER_FD, btn_code, btn_delay);
         }
         else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
             int btn_code, btn_hold;
-            sscanf((char*)(data + HEADER_SIZE), "BTN %d HLD %d", &btn_code, &btn_hold);
+            sscanf((char*)(data + SOCKET_HEADER_SIZE), "BTN %d HLD %d", &btn_code, &btn_hold);
             controllerHold(CONTROLLER_FD, btn_code, btn_hold);
         }
     }

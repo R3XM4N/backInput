@@ -32,12 +32,13 @@ int main(){
     struct sockaddr_un addr{};
     addr.sun_family = AF_UNIX;
     strcpy(addr.sun_path, "/tmp/vinput.sock"); //socket of the reciever
+
+    sendRequest(addr, 1, 0, 0, 0, 2, "KEY " + std::to_string(KEY_D) + " HLD 4");
     sendRequest(addr, 0, 255, 255, 0, 0, "TEST TEXT 100");
 
-    sleep(4);
+    // sleep(4);
     // sendRequest(addr, 1, 0, 0, 0, 0, "KEY " + std::to_string(KEY_W));
     // sendRequest(addr, 1, 0, 0, 0, 1, "KEY " + std::to_string(KEY_A) + " DEL 10000");
-    // sendRequest(addr, 1, 0, 0, 0, 2, "KEY " + std::to_string(KEY_D) + " HLD 4");
 
     // sendRequest(addr, 2, 0, 0, 0, 0, "MVX " + std::to_string(50));
     // sendRequest(addr, 2, 0, 1, 0, 1, "MVY " + std::to_string(50) + " DEL 10000");
@@ -47,7 +48,7 @@ int main(){
     // sendRequest(addr, 2, 0, 4, 0, 1, "MR DEL 10000");
     // sendRequest(addr, 2, 0, 3, 0, 2, "ML HLD 4");
 
-    sendRequest(addr, 3, 0, 1, 0, 0, "STICK MV X 100000");
+    // sendRequest(addr, 3, 0, 1, 0, 0, "STICK MV X 100000");
 
 
 }
