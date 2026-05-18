@@ -1,8 +1,8 @@
 ## Temporary Description
 # Purpose:
-BackInput is a linux only "virtual device process" made using uinput on linux. It enables another app or a process to request to manage virtual devices and make them provide input to the host operating system. Can be used for something like user interaction in systems or even games. 
+BackInput is a linux only "virtual device process" made using uinput on linux. It enables another app or a process to request or manage virtual devices. These virtual devices can provide input to the host operating system. Can be used for something like user interaction inside a system or even automated game interaction. 
 # How:
-"Background process" that runs in background and after recieving a "formated" unix socket does what it is ordered to do.
+This program/process by default runs in the background after getting started/launched and waits/listens for unix sockets formated in the programs "format" which it takes as instructions
 ## Visualization of unix socket format full:
 !["Protocol" Diagram](images/protocol.svg)
 ## Visualization of unix socket system section:
