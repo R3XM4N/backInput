@@ -4,7 +4,7 @@ BackInput is a linux only "virtual device process" made using uinput on linux. I
 # How:
 "Background process" that runs in background and after recieving a "formated" unix socket does what it is ordered to do.
 ## Visual representations:
-!["Protocol" Diagram](images/Protocol.png)
+!["Protocol" Diagram](images/protocol.svg)
 
 ## All of readme and codebase is subject to change project is major work in progress
 ## Some if not all of a protocol may be changed in a future to reduce or increase amount of data transfered
