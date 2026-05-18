@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "../../include/net/process.hpp"
+#include "../../include/system/debug.hpp"
 
 int local_socket(std::string socket_fd_path){
     int socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -23,6 +24,7 @@ int local_socket(std::string socket_fd_path){
 }
 
 void run_process(int local_socket_fd){
+    loggingStart();
     ini_all_devices();
     while (true){
         int client = accept(local_socket_fd, nullptr, nullptr);
@@ -54,4 +56,5 @@ void run_process(int local_socket_fd){
         close(client);
     }
     kill_all_devices();
+    logStop();
 }

@@ -9,6 +9,7 @@
 #include "../../include/controls/devices/virt_mouse.hpp"
 #include "../../include/controls/devices/virt_controller.hpp"
 #include "../../include/controls/virt_global.hpp"
+#include "../../include/system/debug.hpp"
 
 // data[0] = dev_type;
 // data[1] = dev_id;
@@ -54,6 +55,7 @@ void coutBytes(char data[64]){
                 << "data[DEVICE_BYTE_POS_TIME]: " << (int)data[DEVICE_BYTE_POS_TIME] << "\n"
                 << "data[7]: " << (int)data[7] << "\n"
                 << "char data[8-63]: " << data + SOCKET_HEADER_SIZE << "\n";
+    logRecieved(data);
 }
 
 int handleSystemRequest(char data[64]){

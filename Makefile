@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Iinclude
 
-SRC = src/main.cpp src/controls/virt_global.cpp src/controls/devices/*.cpp src/net/*.cpp 
+SRC = src/main.cpp src/controls/virt_global.cpp src/controls/devices/*.cpp src/net/*.cpp src/system/*.cpp
 OUT = backInput
 
 all:

@@ -33,7 +33,7 @@ int main(){
     addr.sun_family = AF_UNIX;
     strcpy(addr.sun_path, "/tmp/vinput.sock"); //socket of the reciever
 
-    sendRequest(addr, 1, 0, 0, 0, 2, "KEY " + std::to_string(KEY_D) + " HLD 4");
+    // sendRequest(addr, 1, 0, 0, 0, 2, "KEY " + std::to_string(KEY_D) + " HLD 4");
     sendRequest(addr, 0, 255, 255, 0, 0, "TEST TEXT 100");
 
     // sleep(4);
