@@ -2,8 +2,9 @@
 #define VIRT_CONTROLLER_HPP
 
 #define CNTRLR_TRIGGER  (char)0 // event type triggers 
-#define CNTRLR_STICK    (char)1 // event type stick
-#define CNTRLR_BTN      (char)2 // event type button
+#define CNTRLR_STICK_X  (char)1 // event type stick
+#define CNTRLR_STICK_Y  (char)2 // event type stick
+#define CNTRLR_BTN      (char)3 // event type button
 
 #define CNTRLR_MOD_NONE char(0) // no modifier
 #define CNTRLR_MOD_OTHER char(1) // modifier Right? (is the target right side cntrl?)

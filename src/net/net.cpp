@@ -31,7 +31,7 @@ void run_process(int local_socket_fd){
         buffer[63] = '\0';
         
         //temp
-        if (buffer[0] == 0){
+        if (buffer[SYS_BYTE_POS_TYPE] == 0){
             if (buffer[1] == (char)255 && buffer[4] == (char)255){
                 handleSystemRequest(buffer);
                 std::cout << "END SIGNAL RECIEVED\n";
@@ -39,13 +39,13 @@ void run_process(int local_socket_fd){
             }
             handleSystemRequest(buffer);
         }
-        else if(buffer[0] == 1){
+        else if(buffer[SYS_BYTE_POS_TYPE] == 1){
             handleKeyboardRequest(buffer);
         }
-        else if(buffer[0] == 2){
+        else if(buffer[SYS_BYTE_POS_TYPE] == 2){
             handleMouseRequest(buffer);
         }
-        else if(buffer[0] == 3){
+        else if(buffer[SYS_BYTE_POS_TYPE] == 3){
             handleControllerRequest(buffer);
         }
         else{
