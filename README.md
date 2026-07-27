@@ -1,3 +1,4 @@
+## ALL BELOW IS MOST LIKELY OUTDATED FOR NEAR FUTURE
 ## Temporary Description
 # Purpose:
 BackInput is a linux only "virtual device process" made using uinput on linux. It enables another app or a process to request or manage virtual devices. These virtual devices can provide input to the host operating system. Can be used for something like user interaction inside a system or even automated game interaction. 

@@ -10,6 +10,7 @@
 #include "../../include/controls/devices/virt_controller.hpp"
 #include "../../include/controls/virt_global.hpp"
 #include "../../include/system/debug.hpp"
+#include "../../include/controls/instructions.hpp"
 
 // data[0] = dev_type;
 // data[1] = dev_id;
