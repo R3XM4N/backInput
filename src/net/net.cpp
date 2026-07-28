@@ -29,8 +29,6 @@ int local_socket(std::string socket_fd_path){
     int socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
     struct sockaddr_un addr{};
     addr.sun_family = AF_UNIX;
-    // strcpy(addr.sun_path, "/tmp/vinput.sock");
-    // strcpy(addr.sun_path, socket_fd_path.c_str());
     strncpy(addr.sun_path, socket_fd_path.c_str(), sizeof(addr.sun_path) -1);
 
     unlink(socket_fd_path.c_str());
@@ -44,67 +42,49 @@ void run_process(int local_socket_fd){
     loggingStart();
     ini_all_devices();
 
-    while (true){
+    bool running_flag = true; // I am in great pain but lazy to make a more elegant solution screw those few bits
+    while (running_flag){
         int client = accept(local_socket_fd, nullptr, nullptr);
         if (client < 0) continue;
 
+        while (true){
+            
+            instruction_header recieved_header;
+            if (!read_exact(client, &recieved_header, sizeof(instruction_header))){
+                logCharPtr("Intruction header has not been recieved fully. Murdering Client.");
+                break;
+            }
+    
+            uint8_t i_type = std::to_integer<uint8_t>(recieved_header.instruction_type);
+            uint8_t i_length = std::to_integer<uint8_t>(recieved_header.instruction_length);
+            
+            if (i_type == 0 && i_length == 0){
+                logCharPtr("END SIGNAL RECIEVED");
+                std::cout << "END SIGNAL RECIEVED\n";
+                running_flag = false;
+                break;
+            }
+            
+            uint8_t recieved_data[256];
+            if (i_length > 0){
+                if (!read_exact(client, recieved_data, i_length)){
+                    logCharPtr("Intruction data has not been recieved fully. Proceeding with client murder.");
+                    break;
+                }   
+            }
+            
+            // TO RE-ADD:
+            //     handleSystemRequest(buffer);
+            //     handleMouseRequest(buffer);
+            //     handleControllerRequest(buffer);
+            //     std::cout << "Error invalid type\n";
 
-        // char buffer[64];
-        // read(client, buffer, sizeof(buffer));
-        // buffer[63] = '\0';
-        
-        instruction_header recieved_header;
-        if (!read_exact(client, &recieved_header, sizeof(instruction_header))){
-            close(client);
-            logCharPtr("Intruction header has not been recieved fully.");
-            continue;
+            if (i_type == 1){
+                handleKeyboardRequest(recieved_data);
+            }    
+            
         }
-
-        uint8_t i_type = std::to_integer<uint8_t>(recieved_header.instruction_type);
-        uint8_t i_length = std::to_integer<uint8_t>(recieved_header.instruction_length);
-        
-        if (i_type == 0 && i_length == 0){
-            close(client);
-            logCharPtr("END SIGNAL RECIEVED");
-            std::cout << "END SIGNAL RECIEVED\n";
-            break;
-        }
-        
-        char recieved_data[256];
-        if (i_length > 0){
-            if (!read_exact(client, recieved_data, i_length)){
-                close(client);
-                logCharPtr("Intruction data has not been recieved fully.");
-                continue;
-            }   
-        }
-        
-        
-        
-        
-
-        // //temps
-        // if (buffer[SYS_BYTE_POS_TYPE] == 0){
-        //     if (buffer[1] == (char)255 && buffer[4] == (char)255){
-        //         handleSystemRequest(buffer);
-        //         std::cout << "END SIGNAL RECIEVED\n";
-        //         break;
-        //     }
-        //     handleSystemRequest(buffer);
-        // }
-        // else if(buffer[SYS_BYTE_POS_TYPE] == 1){
-        //     handleKeyboardRequest(buffer);
-        // }
-        // else if(buffer[SYS_BYTE_POS_TYPE] == 2){
-        //     handleMouseRequest(buffer);
-        // }
-        // else if(buffer[SYS_BYTE_POS_TYPE] == 3){
-        //     handleControllerRequest(buffer);
-        // }
-        // else{
-        //     std::cout << "Error invalid type\n";
-        // }
-        // close(client);
+        close(client);
     }
     kill_all_devices();
     logStop();

@@ -1,18 +1,20 @@
 #ifndef PROCESS_HPP
 #define PROCESS_HPP
 
+#include <cstdint>
+
 #include "../../include/msg_definition.hpp"
 
-void coutBytes(char data[64]);
+// void coutBytes(char data[64]);
 void ini_all_devices();
 void kill_all_devices();
 
-int handleSystemRequest(char data[64]);
+int handleSystemRequest(const uint8_t* data);
 
-int handleKeyboardRequest(char data[64]);
+int handleKeyboardRequest(const uint8_t* data);
 
-int handleControllerRequest(char data[64]);
+int handleControllerRequest(const uint8_t* data);
 
-int handleMouseRequest(char data[64]);
+int handleMouseRequest(const uint8_t* data);
 
 #endif

@@ -46,23 +46,23 @@ void kill_all_devices(){
     active_dev[0] = 0;active_dev[1] = 0;active_dev[2] = 0;
 }
 
-void coutBytes(char data[64]){
-    std::cout   << "data[0]: " << (int)data[0] << "\n"
-                << "data[1]: " << (int)data[1] << "\n"
-                << "data[2]: " << (int)data[2] << "\n"
-                << "data[3]: " << (int)data[3] << "\n"
-                << "data[4]: " << (int)data[4] << "\n"
-                << "data[5]: " << (int)data[5] << "\n"
-                << "data[DEVICE_BYTE_POS_TIME]: " << (int)data[DEVICE_BYTE_POS_TIME] << "\n"
-                << "data[7]: " << (int)data[7] << "\n"
-                << "char data[8-63]: " << data + SOCKET_HEADER_SIZE << "\n";
-    logRecieved(data);
-}
+// void coutBytes(char data[64]){
+//     std::cout   << "data[0]: " << (int)data[0] << "\n"
+//                 << "data[1]: " << (int)data[1] << "\n"
+//                 << "data[2]: " << (int)data[2] << "\n"
+//                 << "data[3]: " << (int)data[3] << "\n"
+//                 << "data[4]: " << (int)data[4] << "\n"
+//                 << "data[5]: " << (int)data[5] << "\n"
+//                 << "data[DEVICE_BYTE_POS_TIME]: " << (int)data[DEVICE_BYTE_POS_TIME] << "\n"
+//                 << "data[7]: " << (int)data[7] << "\n"
+//                 << "char data[8-63]: " << data + SOCKET_HEADER_SIZE << "\n";
+//     logRecieved(data);
+// }
 
-int handleSystemRequest(char data[64]){
+int handleSystemRequest(const uint8_t* data){
     char* text = (char*)data + SOCKET_HEADER_SIZE;
     int test_int;
-    coutBytes(data);
+    // coutBytes(data);
 
     sscanf(text, "TEST TEXT %d", &test_int);
     // snprintf((char*)cmd + 8, 56, "TEST TEXT %d", 100);
@@ -70,38 +70,58 @@ int handleSystemRequest(char data[64]){
     return 0;
 }
 
-int handleKeyboardRequest(char data[64]){
+int handleKeyboardRequest(const uint8_t* data){
     if (active_dev[0] == 0){
         return 1;
         std::cout << "NO KEYBOARDS AVAIBLE\n";
     }
-    coutBytes(data);
+    
+    if (data[1] == (uint8_t)0x00){
+        // NO FLAGS JUST RELEASE
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
+            keyUP(KEYBOARD_FD, *reinterpret_cast<const uint16_t*>(data + 5));
+        }
+    }
+    else if (data[1] == (uint8_t)0x01){
+        // NO FLAGS JUST DEPRESS
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
+            keyDown(KEYBOARD_FD, *reinterpret_cast<const uint16_t*>(data + 5));
+        }
+    }
+    else if (data[1] == (uint8_t)0x02){
+        // NO FLAGS JUST PRESS
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
+            keyPress(KEYBOARD_FD, *reinterpret_cast<const uint16_t*>(data + 5));
+        }
+    }
+    
+    // coutBytes(data);
 
-    if (data[DEVICE_BYTE_POS_INPUT] == KEYBOARD_KEY){
-        if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
-            int key_code;
-            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d", &key_code);
-            keyPress(KEYBOARD_FD, key_code);
-        }
-        else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
-            int key_code, key_delay;
-            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d DEL %d", &key_code, &key_delay);
-            keyPress(KEYBOARD_FD, key_code, key_delay);
-        }
-        else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
-            int key_code, key_hold;
-            sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d HLD %d", &key_code, &key_hold);
-            keyHoldSecond(KEYBOARD_FD, key_code, key_hold);
-        }        
-    }
-    else{
-        std::cout << "KEYBOARD UNRECOGNIZED COMMAND\n";
-    }
+    // if (data[DEVICE_BYTE_POS_INPUT] == KEYBOARD_KEY){
+    //     if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_NONE){
+    //         int key_code;
+    //         sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d", &key_code);
+    //         keyPress(KEYBOARD_FD, key_code);
+    //     }
+    //     else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_DELAY){
+    //         int key_code, key_delay;
+    //         sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d DEL %d", &key_code, &key_delay);
+    //         keyPress(KEYBOARD_FD, key_code, key_delay);
+    //     }
+    //     else if (data[DEVICE_BYTE_POS_TIME] == TIME_BYTE_HOLD){
+    //         int key_code, key_hold;
+    //         sscanf((char*)(data + SOCKET_HEADER_SIZE), "KEY %d HLD %d", &key_code, &key_hold);
+    //         keyHoldSecond(KEYBOARD_FD, key_code, key_hold);
+    //     }        
+    // }
+    // else{
+    //     std::cout << "KEYBOARD UNRECOGNIZED COMMAND\n";
+    // }
     
     return 0;
 }
 
-int handleMouseRequest(char data[64]){
+int handleMouseRequest(const uint8_t* data){
     if (active_dev[1] == 0){
         return 1;
         std::cout << "NO MICE AVAIBLE\n";
@@ -184,12 +204,12 @@ int handleMouseRequest(char data[64]){
     return 0;
 }
 
-int handleControllerRequest(char data[64]){
+int handleControllerRequest(const uint8_t* data){
     if (active_dev[2] == 0){
         return 1;
         std::cout << "NO CONTROLLERS AVAIBLE\n";
     }
-    coutBytes(data);
+    // coutBytes(data);
 
     if (data[DEVICE_BYTE_POS_INPUT] == CNTRLR_TRIGGER){
         int value;
