@@ -40,7 +40,6 @@ int local_socket(std::string socket_fd_path){
 
 void run_process(int local_socket_fd){
     loggingStart();
-    ini_all_devices();
 
     bool running_flag = true; // I am in great pain but lazy to make a more elegant solution screw those few bits
     while (running_flag){
@@ -86,6 +85,5 @@ void run_process(int local_socket_fd){
         }
         close(client);
     }
-    kill_all_devices();
     logStop();
 }

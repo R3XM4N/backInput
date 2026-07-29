@@ -1,69 +1,47 @@
 #ifndef VIRT_MOUSE_HPP
 #define VIRT_MOUSE_HPP
 
-#define MOUSE_MOVE_X    (char)0 // event type move x axis
-#define MOUSE_MOVE_Y    (char)1 // event type move y axis
-#define MOUSE_BTN       (char)2 // event type a button interaction
-#define MOUSE_BTN_L     (char)3 // event type left mouse button interaction
-#define MOUSE_BTN_R     (char)4 // event type right mouse button interaction
+#include <cinttypes>
 
-/// @brief Initializes a virtual mouse uinput
-/// @return Returns file descriptor for the uinput mouse device
-int init_mouse();
-/// @brief Moves the mouse horizontaly
-/// @param fd mouse device file descriptor
-/// @param value value of how much should the device move
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseMoveH(int fd, int value, int u_delay = 0);
-/// @brief Moves the mice on the X axis (mouseMoveX alias)
-/// @param fd mouse device file descriptor
-/// @param value value of how much should the device move
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseMoveX(int fd, int value, int u_delay = 0);
-/// @brief Moves the mouse verticaly
-/// @param fd mouse device file descriptor
-/// @param value value of how much should the device move
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseMoveV(int fd, int value, int u_delay = 0);
-/// @brief Moves the mice on the Y axis (mouseMoveV alias)
-/// @param fd mouse device file descriptor
-/// @param value value of how much should the device move
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseMoveY(int fd, int value, int u_delay = 0);
-/// @brief Holds the specified mouse button (set it to 1)
-/// @param fd mouse device file descriptor
-/// @param code button code
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mousePressBTN(int fd, int code, int u_delay = 0);
-/// @brief Releases the specified mouse button (set it to 0)
-/// @param fd mouse device file descriptor
-/// @param code button code
-void mouseRelBTN(int fd, int code);
-/// @brief Presses the specified mouse button
-/// @param fd mouse device file descriptor
-/// @param code button code
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseClickBTN(int fd, int code, int u_delay = 0);
-/// @brief Holds the specified mouse button (set it to 1)
-/// @param fd mouse device file descriptor
-/// @param code button code
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseHoldBTN(int fd, int code, int seconds);
-/// @brief Clicks the left mouse button
-/// @param fd mouse device file descriptor
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseClickL(int fd, int u_delay = 0);
-/// @brief Clicks the right mouse button
-/// @param fd mouse device file descriptor
-/// @param u_delay usleep delay of how long should device wait for the input to register
-void mouseClickR(int fd, int u_delay = 0);
-/// @brief Holds the left mouse button for n seconds
-/// @param fd mouse device file descriptor
-/// @param seconds how long should the left mouse button be held for
-void mouseHoldL(int fd, int seconds);
-/// @brief Holds the right mouse button for n seconds
-/// @param fd mouse device file descriptor
-/// @param seconds how long should the right mouse button be held for
-void mouseHoldR(int fd, int seconds);
+#define MOUSE_ACTION_BTN_UP     (uint8_t)0;
+#define MOUSE_ACTION_BTN_DOWN   (uint8_t)1;
+#define MOUSE_ACTION_BTN_PRESS  (uint8_t)2;
+#define MOUSE_ACTION_BTN_MV_X   (uint8_t)3;
+#define MOUSE_ACTION_BTN_MV_Y   (uint8_t)4;
+#define MOUSE_ACTION_BTN_MV_H   MOUSE_ACTION_BTN_MV_X
+#define MOUSE_ACTION_BTN_MV_V   MOUSE_ACTION_BTN_MV_Y
+#define MOUSE_ACTION_L_UP       (uint8_t)5;
+#define MOUSE_ACTION_L_DOWN     (uint8_t)6;
+#define MOUSE_ACTION_L_PRESS    (uint8_t)7;
+#define MOUSE_ACTION_R_UP       (uint8_t)8;
+#define MOUSE_ACTION_R_DOWN     (uint8_t)9;
+#define MOUSE_ACTION_R_PRESS    (uint8_t)10;
+
+class VirtualMouse
+{
+private:
+    int device_fd;
+public:
+    void moveX(const int32_t value);
+    void moveY(const int32_t value);
+    void buttonDown(const uint16_t BTN_CODE);
+    void buttonUp(const uint16_t BTN_CODE);
+    void buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_TIME = 0);
+    
+    // Wrappers
+    void moveVertically(const int32_t value);
+    void moveHorizontally(const int32_t value);
+
+    void leftBTNDown();
+    void leftBTNUp();
+    void leftBTNPress(const uint8_t HOLD_TIME = 0);
+
+    void rightBTNDown();
+    void rightBTNUp();
+    void rightBTNPress(const uint8_t HOLD_TIME = 0);
+
+    VirtualMouse();
+    ~VirtualMouse();
+};
 
 #endif

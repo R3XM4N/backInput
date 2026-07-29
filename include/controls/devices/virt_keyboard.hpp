@@ -8,12 +8,11 @@ class VirtualKeyboard
 {
 private:
     int device_fd;
-    /* data */
 public:
     void keyDown(const uint16_t KEY_CODE);
     void keyUp(const uint16_t KEY_CODE);
     void keyPress(const uint16_t KEY_CODE, const uint8_t HOLD_TIME = 0);
-    VirtualKeyboard(/* args */);
+    VirtualKeyboard();
     ~VirtualKeyboard();
 };
 

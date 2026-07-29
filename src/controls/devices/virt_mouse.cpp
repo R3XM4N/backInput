@@ -6,8 +6,8 @@
 #include <fcntl.h>
 #include <cstring>
 
-int init_mouse(){
-    int device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+VirtualMouse::VirtualMouse(/* args */){
+    this->device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 
     ioctl(device_fd, UI_SET_EVBIT, EV_REL);
     ioctl(device_fd, UI_SET_RELBIT, REL_X);
@@ -27,48 +27,43 @@ int init_mouse(){
 
     ioctl(device_fd, UI_DEV_SETUP, &dev_setup);
     ioctl(device_fd, UI_DEV_CREATE);
-
-    return device_fd;
 }
 
-void mouseMoveH(int fd, int value, int u_delay){
-    emit(fd, EV_REL, REL_X, value);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
-    if (u_delay > 0) { usleep(u_delay); }
+VirtualMouse::~VirtualMouse(){
+    destroy_virt_device(this->device_fd);
 }
 
-void mouseMoveV(int fd, int value, int u_delay){
-    emit(fd, EV_REL, REL_Y, value);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
-    if (u_delay > 0) { usleep(u_delay); }
+void VirtualMouse::moveX(const int32_t value){
+    emit(this->device_fd, EV_REL, REL_X, value);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void mousePressBTN(int fd, int code, int u_delay){
-    emit(fd, EV_KEY, code, 1);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
-    if (u_delay > 0) { usleep(u_delay); }
+void VirtualMouse::moveY(const int32_t value){
+    emit(this->device_fd, EV_REL, REL_Y, value);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void mouseRelBTN(int fd, int code){
-    emit(fd, EV_KEY, code, 0);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+void VirtualMouse::buttonDown(const uint16_t BTN_CODE){
+    emit(this->device_fd, EV_KEY, BTN_CODE, 1);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void mouseClickBTN(int fd, int code, int u_delay){
-    mousePressBTN(fd, code);
-    if (u_delay > 0) { usleep(u_delay); }
-    mouseRelBTN(fd, code);
+void VirtualMouse::buttonUp(const uint16_t BTN_CODE){
+    emit(this->device_fd, EV_KEY, BTN_CODE, 0);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void mouseHoldBTN(int fd, int code, int seconds){
-    mousePressBTN(fd, code);
-    sleep(seconds);
-    mouseRelBTN(fd, code);
+void VirtualMouse::buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_TIME){
+    this->buttonDown(BTN_CODE);
+    if (HOLD_TIME > 0){ sleep(HOLD_TIME); }
+    this->buttonUp(BTN_CODE);
 }
 
-void mouseMoveX(int fd, int value, int u_delay) { mouseMoveH(fd, value, u_delay); }
-void mouseMoveY(int fd, int value, int u_delay) { mouseMoveV(fd, value, u_delay); }
-void mouseHoldL(int fd, int seconds) { mouseHoldBTN(fd, BTN_LEFT, seconds); }
-void mouseHoldR(int fd, int seconds) { mouseHoldBTN(fd, BTN_RIGHT, seconds); }
-void mouseClickL(int fd, int u_delay){ mouseClickBTN(fd, BTN_LEFT, u_delay); }
-void mouseClickR(int fd, int u_delay){ mouseClickBTN(fd, BTN_RIGHT, u_delay); }
+void VirtualMouse::moveVertically(const int32_t value){ this->moveY(value);}
+void VirtualMouse::moveHorizontally(const int32_t value){ this->moveX(value);}
+void VirtualMouse::leftBTNDown(){ this->buttonDown(BTN_LEFT); }
+void VirtualMouse::leftBTNUp(){ this->buttonUp(BTN_LEFT); }
+void VirtualMouse::leftBTNPress(const uint8_t HOLD_TIME){ this->buttonPress(BTN_LEFT, HOLD_TIME); }
+void VirtualMouse::rightBTNDown(){ this->buttonDown(BTN_RIGHT); }
+void VirtualMouse::rightBTNUp(){ this->buttonUp(BTN_RIGHT); }
+void VirtualMouse::rightBTNPress(const uint8_t HOLD_TIME){ this->buttonPress(BTN_RIGHT, HOLD_TIME); }

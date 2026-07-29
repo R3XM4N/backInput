@@ -68,9 +68,7 @@ void VirtualKeyboard::keyUp(const uint16_t KEY_CODE){
 
 void VirtualKeyboard::keyPress(const uint16_t KEY_CODE, const uint8_t HOLD_TIME){
     this->keyDown(KEY_CODE);
-    if (HOLD_TIME > 0){
-        sleep(HOLD_TIME);
-    }
+    if (HOLD_TIME > 0){ sleep(HOLD_TIME); }
     this->keyUp(KEY_CODE);
 }
 
