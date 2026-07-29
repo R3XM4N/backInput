@@ -22,7 +22,6 @@ namespace INSTR_KEYBOARD{
     struct keyboard_key_down{
         uint8_t  device_id   = 0;
         uint8_t  action_id   = 1;
-        uint8_t  delay_flag  = 0;
         uint8_t  hold_flag   = 0;
         uint8_t  shift_flag  = 0;
         uint16_t key_code    = 0;
@@ -30,7 +29,6 @@ namespace INSTR_KEYBOARD{
     struct keyboard_key_up{
         uint8_t  device_id   = 0;
         uint8_t  action_id   = 0;
-        uint8_t  delay_flag  = 0;
         uint8_t  hold_flag   = 0;
         uint8_t  shift_flag  = 0;
         uint16_t key_code    = 0;
@@ -38,7 +36,6 @@ namespace INSTR_KEYBOARD{
     struct keyboard_key_press{
         uint8_t  device_id   = 0;
         uint8_t  action_id   = 2;
-        uint8_t  delay_flag  = 0;
         uint8_t  hold_flag   = 0;
         uint8_t  shift_flag  = 0;
         uint16_t key_code    = 0;

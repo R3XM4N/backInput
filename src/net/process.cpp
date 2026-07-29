@@ -23,20 +23,20 @@ int handleSystemRequest(const uint8_t* data){
 int handleKeyboardRequest(const uint8_t* data){
     if (data[1] == (uint8_t)0x00){
         // NO FLAGS JUST RELEASE
-        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
-            default_keyboard.keyUp(*reinterpret_cast<const uint16_t*>(data + 5));
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00){
+            default_keyboard.keyUp(*reinterpret_cast<const uint16_t*>(data + 4));
         }
     }
     else if (data[1] == (uint8_t)0x01){
         // NO FLAGS JUST DEPRESS
-        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
-            default_keyboard.keyDown(*reinterpret_cast<const uint16_t*>(data + 5));
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00){
+            default_keyboard.keyDown(*reinterpret_cast<const uint16_t*>(data + 4));
         }
     }
     else if (data[1] == (uint8_t)0x02){
         // NO FLAGS JUST PRESS
-        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00 && data[4] == (uint8_t)0x00){
-            default_keyboard.keyPress(*reinterpret_cast<const uint16_t*>(data + 5));
+        if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00){
+            default_keyboard.keyPress(*reinterpret_cast<const uint16_t*>(data + 4));
         }
     }
     

@@ -6,8 +6,8 @@
 #include <fcntl.h>
 #include <cstring>
 
-int init_controller(){
-    int device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+VirtualController::VirtualController(/* args */){
+    this->device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 
     ioctl(device_fd, UI_SET_KEYBIT, BTN_SOUTH);
     ioctl(device_fd, UI_SET_EVBIT, EV_KEY);
@@ -58,65 +58,60 @@ int init_controller(){
 
     ioctl(device_fd, UI_DEV_SETUP, &dev_setup);
     ioctl(device_fd, UI_DEV_CREATE);
-
-    return device_fd;
 }
 
-void controllerMoveStickX(int fd, int value, bool right){
+VirtualController::~VirtualController(){
+    destroy_virt_device(this->device_fd);
+}
+
+void VirtualController::stickMoveX(int16_t value, const bool right_flag){
     if (value > 32767) {value = 32767;}
     if (value < -32768) {value = -32768;}
-    if (right){
-        emit(fd, EV_ABS, ABS_RX, value);
+    if (right_flag){
+        emit(this->device_fd, EV_ABS, ABS_RX, value);
     }
     else{
-        emit(fd, EV_ABS, ABS_X, value);
+        emit(this->device_fd, EV_ABS, ABS_X, value);
     }
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void controllerMoveStickY(int fd, int value, bool right){
+void VirtualController::stickMoveY(int16_t value, const bool right_flag){
     if (value > 32767) {value = 32767;}
     if (value < -32768) {value = -32768;}
-    if (right){
-        emit(fd, EV_ABS, ABS_RY, value);
+    if (right_flag){
+        emit(this->device_fd, EV_ABS, ABS_RY, value);
     }
     else{
-        emit(fd, EV_ABS, ABS_Y, value);
+        emit(this->device_fd, EV_ABS, ABS_Y, value);
     }
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void controllerPressTrigger(int fd, int value, bool right){
+void VirtualController::pressTrigger(uint16_t value, const bool right_flag){
     if (value > 255) {value = 255;}
     if (value < 0) {value = 0;}
-    if (right){
-        emit(fd, EV_ABS, ABS_RZ, value);
+    if (right_flag){
+        emit(this->device_fd, EV_ABS, ABS_RZ, value);
     }
     else{
-        emit(fd, EV_ABS, ABS_Z, value);
+        emit(this->device_fd, EV_ABS, ABS_Z, value);
     }
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void controllerPress(int fd, int code, int u_delay){
-    emit(fd, EV_KEY ,code, 1);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
-    if (u_delay > 0) { usleep(u_delay); }
+void VirtualController::buttonDown(const uint16_t BTN_CODE){
+    emit(this->device_fd, EV_KEY ,BTN_CODE, 1);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void controllerRelease(int fd, int code){
-    emit(fd, EV_KEY ,code, 0);
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+void VirtualController::buttonUp(const uint16_t BTN_CODE){
+    emit(this->device_fd, EV_KEY ,BTN_CODE, 0);
+    emit(this->device_fd, EV_SYN, SYN_REPORT, 0);
 }
 
-void controllerClick(int fd, int code, int u_delay){
-    controllerPress(fd, code);
-    if (u_delay > 0) { usleep(u_delay); }
-    controllerRelease(fd, code);
-}
-
-void controllerHold(int fd, int code, int seconds){
-    controllerPress(fd, code);
-    sleep(seconds);
-    controllerRelease(fd, code);
+void VirtualController::buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_TIME){
+    this->buttonDown(BTN_CODE);
+    if (HOLD_TIME > 0){ sleep(HOLD_TIME); }
+    this->buttonUp(BTN_CODE);
 }
