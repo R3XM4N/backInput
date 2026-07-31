@@ -22,14 +22,28 @@ class VirtualMouse
 private:
     int device_fd;
 public:
+    /// @brief Sends a move input on the X axis
+    /// @param value How much should it move
     void moveX(const int32_t value);
+    /// @brief Sends a move input on the Y axis
+    /// @param value How much should it move
     void moveY(const int32_t value);
+    /// @brief Sets the mouse button into the held/pressed position
+    /// @param BTN_CODE Code of the button key
     void buttonDown(const uint16_t BTN_CODE);
+    /// @brief Sets the mouse button into the released/depressed position
+    /// @param BTN_CODE Code of the button key
     void buttonUp(const uint16_t BTN_CODE);
+    /// @brief Clicks a button on the mouse
+    /// @param BTN_CODE Code of the button key
     void buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_TIME = 0);
     
     // Wrappers
+    /// @brief Sends a vertical move input
+    /// @param value How much should it move
     void moveVertically(const int32_t value);
+    /// @brief Sends a horizontal move input
+    /// @param value How much should it move
     void moveHorizontally(const int32_t value);
 
     void leftBTNDown();
