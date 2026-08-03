@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-#include "../../include/msg_definition.hpp"
+#include "../net/instructions/msg_definition.hpp"
 
 int handleSystemRequest(const uint8_t* data);
 

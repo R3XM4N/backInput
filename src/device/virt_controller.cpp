@@ -1,5 +1,5 @@
-#include "../../../include/controls/devices/virt_controller.hpp"
-#include "../../../include/controls/virt_global.hpp"
+#include "../../include/device/virt_controller.hpp"
+#include "../../include/device/virt_global.hpp"
 
 #include <linux/uinput.h>
 #include <unistd.h>

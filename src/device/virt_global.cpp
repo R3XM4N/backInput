@@ -1,4 +1,4 @@
-#include "../../include/controls/virt_global.hpp"
+#include "../../include/device/virt_global.hpp"
 
 #include <linux/uinput.h>
 #include <unistd.h>

@@ -2,12 +2,11 @@
 #include <unistd.h>
 #include <linux/uinput.h>
 
-#include "../include/controls/devices/virt_keyboard.hpp"
-#include "../include/controls/devices/virt_mouse.hpp"
-#include "../include/controls/devices/virt_controller.hpp"
-#include "../include/controls/virt_global.hpp"
+#include "../include/device/virt_keyboard.hpp"
+#include "../include/device/virt_mouse.hpp"
+#include "../include/device/virt_controller.hpp"
+#include "../include/device/virt_global.hpp"
 #include "../include/net/net.hpp"
-
 
 
 int main(int argc, char** argv){

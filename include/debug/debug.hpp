@@ -1,7 +1,7 @@
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
 
-#include "../../include/msg_definition.hpp"
+#include "../net/instructions/msg_definition.hpp"
 
 #define LOG_LOCATION_TEMP   "temp.log"
 #define LOG_LOCATION_SAVED  "latest.log"

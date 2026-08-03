@@ -7,9 +7,9 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "../../include/net/process.hpp"
-#include "../../include/system/debug.hpp"
-#include "../../include/controls/instructions.hpp"
+#include "../../include/core/process.hpp"
+#include "../../include/debug/debug.hpp"
+#include "../../include/net/instructions/instructions_all.hpp"
 
 bool read_exact(int fd, void* buffer, uint8_t length){
     uint8_t total_read = 0;

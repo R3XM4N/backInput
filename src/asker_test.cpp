@@ -7,7 +7,7 @@
 #include <linux/uinput.h>
 #include <cinttypes>
 
-#include "../include/controls/instructions.hpp"
+#include "../include/net/instructions/instructions_all.hpp"
 
 void sendHeader(int fd, uint8_t type, uint8_t length) {
     instruction_header header;

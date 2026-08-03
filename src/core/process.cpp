@@ -1,16 +1,16 @@
-#include "../../include/net/process.hpp"
+#include "../../include/core/process.hpp"
 
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
 
-#include "../../include/controls/devices/virt_keyboard.hpp"
-#include "../../include/controls/devices/virt_mouse.hpp"
-#include "../../include/controls/devices/virt_controller.hpp"
-#include "../../include/controls/virt_global.hpp"
-#include "../../include/system/debug.hpp"
-#include "../../include/controls/instructions.hpp"
+#include "../../include/device/virt_keyboard.hpp"
+#include "../../include/device/virt_mouse.hpp"
+#include "../../include/device/virt_controller.hpp"
+#include "../../include/device/virt_global.hpp"
+#include "../../include/debug/debug.hpp"
+#include "../../include/net/instructions/instructions_all.hpp"
 
 VirtualKeyboard default_keyboard;
 VirtualMouse    default_mouse;
