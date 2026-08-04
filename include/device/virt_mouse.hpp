@@ -3,19 +3,19 @@
 
 #include <cinttypes>
 
-#define MOUSE_ACTION_BTN_UP     (uint8_t)0;
-#define MOUSE_ACTION_BTN_DOWN   (uint8_t)1;
-#define MOUSE_ACTION_BTN_PRESS  (uint8_t)2;
-#define MOUSE_ACTION_BTN_MV_X   (uint8_t)3;
-#define MOUSE_ACTION_BTN_MV_Y   (uint8_t)4;
+#define MOUSE_ACTION_BTN_UP     (uint8_t)0
+#define MOUSE_ACTION_BTN_DOWN   (uint8_t)1
+#define MOUSE_ACTION_BTN_PRESS  (uint8_t)2
+#define MOUSE_ACTION_BTN_MV_X   (uint8_t)3
+#define MOUSE_ACTION_BTN_MV_Y   (uint8_t)4
 #define MOUSE_ACTION_BTN_MV_H   MOUSE_ACTION_BTN_MV_X
 #define MOUSE_ACTION_BTN_MV_V   MOUSE_ACTION_BTN_MV_Y
-#define MOUSE_ACTION_L_UP       (uint8_t)5;
-#define MOUSE_ACTION_L_DOWN     (uint8_t)6;
-#define MOUSE_ACTION_L_PRESS    (uint8_t)7;
-#define MOUSE_ACTION_R_UP       (uint8_t)8;
-#define MOUSE_ACTION_R_DOWN     (uint8_t)9;
-#define MOUSE_ACTION_R_PRESS    (uint8_t)10;
+#define MOUSE_ACTION_L_UP       (uint8_t)5
+#define MOUSE_ACTION_L_DOWN     (uint8_t)6
+#define MOUSE_ACTION_L_PRESS    (uint8_t)7
+#define MOUSE_ACTION_R_UP       (uint8_t)8
+#define MOUSE_ACTION_R_DOWN     (uint8_t)9
+#define MOUSE_ACTION_R_PRESS    (uint8_t)10
 
 class VirtualMouse
 {

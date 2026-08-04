@@ -78,10 +78,21 @@ void run_process(int local_socket_fd){
             //     handleControllerRequest(buffer);
             //     std::cout << "Error invalid type\n";
 
-            if (i_type == 1){
+            if( i_type == 0x00){
+                // SYSTEM INSTRUCTIONS
+            }
+            else if(i_type == 0x01){
                 handleKeyboardRequest(recieved_data);
-            }    
-            
+            }
+            else if( i_type = 0x02){
+                handleMouseRequest(recieved_data);
+            }
+            else if( i_type = 0x03){
+                handleControllerRequest(recieved_data);
+            }
+            else{
+                // TO DO INVALID REPORTING
+            }
         }
         close(client);
     }
