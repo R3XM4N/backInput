@@ -50,7 +50,7 @@ void run_process(int local_socket_fd){
             
             instruction_header recieved_header;
             if (!read_exact(client, &recieved_header, sizeof(instruction_header))){
-                logCharPtr("Intruction header has not been recieved fully. Murdering Client.");
+                logCharPtr((char*)"Intruction header has not been recieved fully. Murdering Client.");
                 break;
             }
     
@@ -58,7 +58,7 @@ void run_process(int local_socket_fd){
             uint8_t i_length = std::to_integer<uint8_t>(recieved_header.instruction_length);
             
             if (i_type == 0 && i_length == 0){
-                logCharPtr("END SIGNAL RECIEVED");
+                logCharPtr((char*)"END SIGNAL RECIEVED");
                 std::cout << "END SIGNAL RECIEVED\n";
                 running_flag = false;
                 break;
@@ -67,7 +67,7 @@ void run_process(int local_socket_fd){
             uint8_t recieved_data[256];
             if (i_length > 0){
                 if (!read_exact(client, recieved_data, i_length)){
-                    logCharPtr("Intruction data has not been recieved fully. Proceeding with client murder.");
+                    logCharPtr((char*)"Intruction data has not been recieved fully. Proceeding with client murder.");
                     break;
                 }   
             }
