@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <cstring>
 #include <string>
+#include <memory>
 
 
 // /// @brief Holds the key in pressed for n seconds
@@ -76,15 +77,13 @@ VirtualKeyboard::~VirtualKeyboard(){
     if (this->device_fd != -1) { destroy_virt_device(this->device_fd); }
 }
 
-VirtualKeyboard::VirtualKeyboard(VirtualKeyboard&& other) noexcept{
+VirtualKeyboard::VirtualKeyboard(VirtualKeyboard&& other) noexcept : VirtualDevice(std::move(other)){
     this->device_fd = other.device_fd;
     other.device_fd = -1;
 }
 VirtualKeyboard& VirtualKeyboard::operator=(VirtualKeyboard&& other) noexcept{
     if (this != &other){
-        if (this->device_fd != -1){ destroy_virt_device(this->device_fd);}
-        this->device_fd = other.device_fd;
-        other.device_fd = -1;
+        VirtualDevice::operator=(std::move(other));
     }
     return *this;
 }

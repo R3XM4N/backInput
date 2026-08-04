@@ -3,6 +3,8 @@
 
 #include <cinttypes>
 
+#include "virt_global.hpp"
+
 #define MOUSE_ACTION_BTN_UP     (uint8_t)0
 #define MOUSE_ACTION_BTN_DOWN   (uint8_t)1
 #define MOUSE_ACTION_BTN_PRESS  (uint8_t)2
@@ -17,10 +19,10 @@
 #define MOUSE_ACTION_R_DOWN     (uint8_t)9
 #define MOUSE_ACTION_R_PRESS    (uint8_t)10
 
-class VirtualMouse
+class VirtualMouse : public VirtualDevice
 {
 private:
-    int device_fd;
+    // int device_fd;
 public:
     /// @brief Sends a move input on the X axis
     /// @param value How much should it move

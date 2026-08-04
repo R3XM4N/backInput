@@ -3,6 +3,8 @@
 
 #include <cinttypes>
 
+#include "virt_global.hpp"
+
 #define CNTRL_ACTION_BTN_UP         (uint8_t)0
 #define CNTRL_ACTION_BTN_DOWN       (uint8_t)1
 #define CNTRL_ACTION_BTN_PRESS      (uint8_t)2
@@ -10,10 +12,10 @@
 #define CNTRL_ACTION_MOVE_STICK_Y   (uint8_t)4
 #define CNTRL_ACTION_SET_TRIGGER    (uint8_t)5
 
-class VirtualController
+class VirtualController : public VirtualDevice
 {
 private:
-    int device_fd;
+    // int device_fd;
     /* data */
 public:
     /// @brief Moves the controller stick to the desired X position/value

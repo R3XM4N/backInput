@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstring>
+#include <memory>
 
 VirtualMouse::VirtualMouse(/* args */){
     this->device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -68,15 +69,13 @@ void VirtualMouse::rightBTNDown(){ this->buttonDown(BTN_RIGHT); }
 void VirtualMouse::rightBTNUp(){ this->buttonUp(BTN_RIGHT); }
 void VirtualMouse::rightBTNPress(const uint8_t HOLD_TIME){ this->buttonPress(BTN_RIGHT, HOLD_TIME); }
 
-VirtualMouse::VirtualMouse(VirtualMouse&& other) noexcept{
+VirtualMouse::VirtualMouse(VirtualMouse&& other) noexcept : VirtualDevice(std::move(other)){
     this->device_fd = other.device_fd;
     other.device_fd = -1;
 }
 VirtualMouse& VirtualMouse::operator=(VirtualMouse&& other) noexcept{
     if (this != &other){
-        if (this->device_fd != -1){ destroy_virt_device(this->device_fd);}
-        this->device_fd = other.device_fd;
-        other.device_fd = -1;
+        VirtualDevice::operator=(std::move(other));
     }
     return *this;
 }

@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cstring>
+#include <memory>
 
 VirtualController::VirtualController(/* args */){
     this->device_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -116,15 +117,13 @@ void VirtualController::buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_
     this->buttonUp(BTN_CODE);
 }
 
-VirtualController::VirtualController(VirtualController&& other) noexcept{
+VirtualController::VirtualController(VirtualController&& other) noexcept : VirtualDevice(std::move(other)){
     this->device_fd = other.device_fd;
     other.device_fd = -1;
 }
 VirtualController& VirtualController::operator=(VirtualController&& other) noexcept{
     if (this != &other){
-        if (this->device_fd != -1){ destroy_virt_device(this->device_fd);}
-        this->device_fd = other.device_fd;
-        other.device_fd = -1;
+        VirtualDevice::operator=(std::move(other));
     }
     return *this;
 }

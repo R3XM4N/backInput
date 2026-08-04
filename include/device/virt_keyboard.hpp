@@ -4,10 +4,12 @@
 #include <string>
 #include <cinttypes>
 
-class VirtualKeyboard
+#include "virt_global.hpp"
+
+class VirtualKeyboard : public VirtualDevice
 {
 private:
-    int device_fd;
+    // int device_fd;
 public:
     /// @brief Set's the key into the held position
     /// @param KEY_CODE code of the desired key
