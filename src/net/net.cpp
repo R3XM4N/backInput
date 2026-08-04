@@ -84,10 +84,10 @@ void run_process(int local_socket_fd){
             else if(i_type == 0x01){
                 handleKeyboardRequest(recieved_data);
             }
-            else if( i_type = 0x02){
+            else if( i_type == 0x02){
                 handleMouseRequest(recieved_data);
             }
-            else if( i_type = 0x03){
+            else if( i_type == 0x03){
                 handleControllerRequest(recieved_data);
             }
             else{
