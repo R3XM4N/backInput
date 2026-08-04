@@ -56,6 +56,13 @@ public:
 
     VirtualMouse();
     ~VirtualMouse();
+
+    // NO COPY 
+    VirtualMouse(const VirtualMouse& other) = delete;
+    VirtualMouse& operator=(const VirtualMouse& other) = delete;
+    // YES MOVE
+    VirtualMouse(VirtualMouse&& other) noexcept;
+    VirtualMouse& operator=(VirtualMouse&& other) noexcept;
 };
 
 #endif

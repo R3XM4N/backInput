@@ -42,6 +42,13 @@ public:
     /// @brief Destroys the controller including the fd
     ~VirtualController();
     // TO DO ADD A-PAD D-PAD 
+
+    // NO COPY 
+    VirtualController(const VirtualController& other) = delete;
+    VirtualController& operator=(const VirtualController& other) = delete;
+    // YES MOVE
+    VirtualController(VirtualController&& other) noexcept;
+    VirtualController& operator=(VirtualController&& other) noexcept;
 };
 
 #endif

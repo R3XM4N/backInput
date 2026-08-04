@@ -73,5 +73,18 @@ void VirtualKeyboard::keyPress(const uint16_t KEY_CODE, const uint8_t HOLD_TIME)
 }
 
 VirtualKeyboard::~VirtualKeyboard(){
-    destroy_virt_device(this->device_fd);
+    if (this->device_fd != -1) { destroy_virt_device(this->device_fd); }
+}
+
+VirtualKeyboard::VirtualKeyboard(VirtualKeyboard&& other) noexcept{
+    this->device_fd = other.device_fd;
+    other.device_fd = -1;
+}
+VirtualKeyboard& VirtualKeyboard::operator=(VirtualKeyboard&& other) noexcept{
+    if (this != &other){
+        if (this->device_fd != -1){ destroy_virt_device(this->device_fd);}
+        this->device_fd = other.device_fd;
+        other.device_fd = -1;
+    }
+    return *this;
 }

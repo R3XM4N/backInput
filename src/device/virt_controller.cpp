@@ -61,7 +61,7 @@ VirtualController::VirtualController(/* args */){
 }
 
 VirtualController::~VirtualController(){
-    destroy_virt_device(this->device_fd);
+    if (this->device_fd != -1) { destroy_virt_device(this->device_fd); }
 }
 
 void VirtualController::stickMoveX(int16_t value, const bool right_flag){
@@ -114,4 +114,17 @@ void VirtualController::buttonPress(const uint16_t BTN_CODE, const uint8_t HOLD_
     this->buttonDown(BTN_CODE);
     if (HOLD_TIME > 0){ sleep(HOLD_TIME); }
     this->buttonUp(BTN_CODE);
+}
+
+VirtualController::VirtualController(VirtualController&& other) noexcept{
+    this->device_fd = other.device_fd;
+    other.device_fd = -1;
+}
+VirtualController& VirtualController::operator=(VirtualController&& other) noexcept{
+    if (this != &other){
+        if (this->device_fd != -1){ destroy_virt_device(this->device_fd);}
+        this->device_fd = other.device_fd;
+        other.device_fd = -1;
+    }
+    return *this;
 }

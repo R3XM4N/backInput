@@ -18,8 +18,16 @@ public:
     /// @brief Clicks the key
     /// @param KEY_CODE code of the desired key
     void keyPress(const uint16_t KEY_CODE, const uint8_t HOLD_TIME = 0);
-    VirtualKeyboard();
+
+    explicit VirtualKeyboard();
     ~VirtualKeyboard();
+
+    // NO COPY 
+    VirtualKeyboard(const VirtualKeyboard& other) = delete;
+    VirtualKeyboard& operator=(const VirtualKeyboard& other) = delete;
+    // YES MOVE
+    VirtualKeyboard(VirtualKeyboard&& other) noexcept;
+    VirtualKeyboard& operator=(VirtualKeyboard&& other) noexcept;
 };
 
 #endif
