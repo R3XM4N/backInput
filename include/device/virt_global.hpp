@@ -1,6 +1,8 @@
 #ifndef VIRT_GLOBAL_HPP
 #define VIRT_GLOBAL_HPP
 
+#include <cinttypes>
+
 void emit(int fd, int type, int code, int value);
 void destroy_virt_device(int fd);
 
@@ -8,6 +10,7 @@ class VirtualDevice
 {
 protected:
     int device_fd = -1;
+    uint8_t m_id = 0;
     VirtualDevice() = default;
 public:
     virtual ~VirtualDevice();
@@ -17,6 +20,8 @@ public:
     // YES MOVE
     VirtualDevice(VirtualDevice&& other) noexcept;
     VirtualDevice& operator=(VirtualDevice&& other) noexcept;
+
+    int getID() const { return m_id; }
 private:
 };
 

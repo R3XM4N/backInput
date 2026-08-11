@@ -41,7 +41,9 @@ int local_socket(std::string socket_fd_path){
 void run_process(int local_socket_fd){
     loggingStart();
 
-    bool running_flag = true; // I am in great pain but lazy to make a more elegant solution screw those few bits
+    bool direct_mode = true;    // If executor is to bypassed
+    bool running_flag = true;   // I am in great pain but lazy to make a more elegant solution screw those few bits
+
     while (running_flag){
         int client = accept(local_socket_fd, nullptr, nullptr);
         if (client < 0) continue;
@@ -78,21 +80,26 @@ void run_process(int local_socket_fd){
             //     handleControllerRequest(buffer);
             //     std::cout << "Error invalid type\n";
 
-            if( i_type == 0x00){
-                // SYSTEM INSTRUCTIONS
+            if (direct_mode){
+                if( i_type == 0x00){
+                    // SYSTEM INSTRUCTIONS
+                }
+                else if(i_type == 0x01){
+                    handleKeyboardRequest(recieved_data);
+                }
+                else if( i_type == 0x02){
+                    handleMouseRequest(recieved_data);
+                }
+                else if( i_type == 0x03){
+                    handleControllerRequest(recieved_data);
+                }
+                else{
+                    // TO DO INVALID REPORTING
+                }
             }
-            else if(i_type == 0x01){
-                handleKeyboardRequest(recieved_data);
-            }
-            else if( i_type == 0x02){
-                handleMouseRequest(recieved_data);
-            }
-            else if( i_type == 0x03){
-                handleControllerRequest(recieved_data);
-            }
-            else{
-                // TO DO INVALID REPORTING
-            }
+            
+            
+            
         }
         close(client);
     }
