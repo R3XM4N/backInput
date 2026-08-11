@@ -10,6 +10,7 @@
 #include "../../include/core/process.hpp"
 #include "../../include/debug/debug.hpp"
 #include "../../include/net/instructions/instructions_all.hpp"
+#include "../../include/core/executor.hpp"
 
 bool read_exact(int fd, void* buffer, uint8_t length){
     uint8_t total_read = 0;
@@ -43,6 +44,8 @@ void run_process(int local_socket_fd){
 
     bool direct_mode = true;    // If executor is to bypassed
     bool running_flag = true;   // I am in great pain but lazy to make a more elegant solution screw those few bits
+
+    Executor local_executor;
 
     while (running_flag){
         int client = accept(local_socket_fd, nullptr, nullptr);
@@ -80,26 +83,38 @@ void run_process(int local_socket_fd){
             //     handleControllerRequest(buffer);
             //     std::cout << "Error invalid type\n";
 
+            if( i_type == 0x00){
+                // SYSTEM INSTRUCTIONS
+            }
             if (direct_mode){
-                if( i_type == 0x00){
-                    // SYSTEM INSTRUCTIONS
-                }
-                else if(i_type == 0x01){
-                    handleKeyboardRequest(recieved_data);
+                if(i_type == 0x01){
+                    handleKeyboardRequest(recieved_data)();
                 }
                 else if( i_type == 0x02){
-                    handleMouseRequest(recieved_data);
+                    handleMouseRequest(recieved_data)();
                 }
                 else if( i_type == 0x03){
-                    handleControllerRequest(recieved_data);
+                    handleControllerRequest(recieved_data)();
                 }
                 else{
                     // TO DO INVALID REPORTING
                 }
             }
-            
-            
-            
+            else{
+                if(i_type == 0x01){
+                    local_executor.enqueue(handleKeyboardRequest(recieved_data));
+                }
+                else if( i_type == 0x02){
+                    local_executor.enqueue(handleMouseRequest(recieved_data));
+                }
+                else if( i_type == 0x03){
+                    local_executor.enqueue(handleControllerRequest(recieved_data));
+                }
+                else{
+                    // TO DO INVALID REPORTING
+                }
+                local_executor.execute();
+            }
         }
         close(client);
     }

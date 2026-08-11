@@ -21,52 +21,70 @@ int handleSystemRequest(const uint8_t* data){
     return 0;
 }
 
-int handleKeyboardRequest(const uint8_t* data){
+std::function<void()> handleKeyboardRequest(const uint8_t* data){
     // TO DO THIS IGNORES FLAGS RN I NEED TO REMAKE THE FORMAT HOLD IS REDUNDANT BUT SHIFT NOT
     if (data[1] == (uint8_t)0x00){
         // NO FLAGS JUST RELEASE
-        default_keyboard.keyUp(*reinterpret_cast<const uint16_t*>(data + 4));
+        return [key_code = *reinterpret_cast<const uint16_t*>(data + 4)](){
+            default_keyboard.keyUp(key_code);
+        };
     }
     else if (data[1] == (uint8_t)0x01){
         // NO FLAGS JUST DEPRESS
-        default_keyboard.keyDown(*reinterpret_cast<const uint16_t*>(data + 4));
+        return [key_code = *reinterpret_cast<const uint16_t*>(data + 4)](){
+            default_keyboard.keyDown(key_code);
+        };
     }
     else if (data[1] == (uint8_t)0x02){
         // NO FLAGS JUST PRESS
         if (data[2] == (uint8_t)0x00 && data[3] == (uint8_t)0x00){
-            default_keyboard.keyPress(*reinterpret_cast<const uint16_t*>(data + 4));
+            return [key_code = *reinterpret_cast<const uint16_t*>(data + 4)](){
+                default_keyboard.keyPress(key_code);
+            };
         }
     }
-    
-    return 0;
+    return [](){ std::cout << "ERROR INVALID KEYBOARD REQUEST FOUND";};
 }
 
-int handleMouseRequest(const uint8_t* data){
+std::function<void()> handleMouseRequest(const uint8_t* data){
     if (data[1] == MOUSE_ACTION_BTN_UP){
         // NO FLAGS JUST RELEASE
-        default_mouse.buttonUp(*reinterpret_cast<const uint16_t*>(data + 2));
+        return [btn_code = *reinterpret_cast<const uint16_t*>(data + 2)](){
+            default_mouse.buttonUp(btn_code);
+        };
     }
     else if(data[1] == MOUSE_ACTION_BTN_DOWN){
         // NO FLAGS JUST DEPRESS
-        default_mouse.buttonDown(*reinterpret_cast<const uint16_t*>(data + 2));
+        return [btn_code = *reinterpret_cast<const uint16_t*>(data + 2)](){
+            default_mouse.buttonDown(btn_code);
+        };
     }
     else if(data[1] == MOUSE_ACTION_BTN_PRESS){
         // NO FLAGS JUST PRESS
         if (data[2 == (uint8_t)0x00]){
-            default_mouse.buttonPress(*reinterpret_cast<const uint16_t*>(data + 3));
+            return [btn_code = *reinterpret_cast<const uint16_t*>(data + 3)](){
+                default_mouse.buttonPress(btn_code);
+            };
         }
         // PRESS HOLD FLAG
         else if(data[2 == (uint8_t)0x01]){
-            // default_mouse.buttonPress(*reinterpret_cast<const uint16_t*>(data + 3), blah blah);
+            /// PRESS FOR X SECONDS
+            return [btn_code = *reinterpret_cast<const uint16_t*>(data + 3), hold_time = *reinterpret_cast<const uint8_t*>(data + 5)](){
+                default_mouse.buttonPress(btn_code, hold_time);
+            };
         }
     }
     else if(data[1] == MOUSE_ACTION_BTN_MV_X){
         // MOVE X
-        default_mouse.moveX(*reinterpret_cast<const int32_t*>(data + 2));
+        return [value = *reinterpret_cast<const int32_t*>(data + 2)](){
+            default_mouse.moveX(value);
+        };
     }
     else if(data[1] == MOUSE_ACTION_BTN_MV_Y){
         // MOVE Y
-        default_mouse.moveY(*reinterpret_cast<const int32_t*>(data + 2));
+        return [value = *reinterpret_cast<const int32_t*>(data + 2)](){
+            default_mouse.moveY(value);
+        };
     }
     
     // TO DO:
@@ -75,61 +93,81 @@ int handleMouseRequest(const uint8_t* data){
     // SCROLL
     // EXTRAS
 
-    return 0;
+    return [](){ std::cout << "ERROR INVALID MOUSE REQUEST FOUND";};
 }
 
-int handleControllerRequest(const uint8_t* data){
+std::function<void()> handleControllerRequest(const uint8_t* data){
     if (data[1] == CNTRL_ACTION_BTN_UP){
         // NO FLAGS JUST RELEASE
-        default_controller.buttonUp(*reinterpret_cast<const uint16_t*>(data + 2));
+        return [btn_code = *reinterpret_cast<const uint16_t*>(data + 2)](){
+            default_controller.buttonUp(btn_code);
+        };
     }
     else if(data[1] == CNTRL_ACTION_BTN_DOWN){
         // NO FLAGS JUST DEPRESS
-        default_controller.buttonDown(*reinterpret_cast<const uint16_t*>(data + 2));
+        return [btn_code = *reinterpret_cast<const uint16_t*>(data + 2)](){
+            default_controller.buttonDown(btn_code);
+        };
     }
     else if(data[1] == CNTRL_ACTION_BTN_PRESS){
         // NO FLAGS JUST PRESS
         if (data[2 == (uint8_t)0x00]){
-            default_controller.buttonPress(*reinterpret_cast<const uint16_t*>(data + 3));
+            return [btn_code = *reinterpret_cast<const uint16_t*>(data + 3)](){
+                default_controller.buttonPress(btn_code);
+            };
         }
         // PRESS HOLD FLAG
         else if(data[2 == (uint8_t)0x01]){
-            // default_controller.buttonPress(*reinterpret_cast<const uint16_t*>(data + 3), blah blah);
+            return [btn_code = *reinterpret_cast<const uint16_t*>(data + 3), hold_time = *reinterpret_cast<const uint8_t*>(data + 5)](){
+                default_controller.buttonPress(btn_code, hold_time);
+            };
         }
     }
     else if(data[1] == CNTRL_ACTION_MOVE_STICK_X){
         // MOVE LEFT STICK X
         if (data[2] == (uint8_t)0x00){
-            default_controller.stickMoveX(*reinterpret_cast<const int16_t*>(data + 3), 0);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.stickMoveX(value, 0);
+            };
         }
         // MOVE RIGHT STICK X
         else if (data[2] == (uint8_t)0x01){
-            default_controller.stickMoveX(*reinterpret_cast<const int16_t*>(data + 3), 1);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.stickMoveX(value, 1);
+            };
         }        
     }
     else if(data[1] == CNTRL_ACTION_MOVE_STICK_Y){
         // MOVE LEFT STICK Y
         if (data[2] == (uint8_t)0x00){
-            default_controller.stickMoveY(*reinterpret_cast<const int16_t*>(data + 3), 0);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.stickMoveY(value, 0);
+            };
         }
         // MOVE RIGHT STICK Y
         else if (data[2] == (uint8_t)0x01){
-            default_controller.stickMoveY(*reinterpret_cast<const int16_t*>(data + 3), 1);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.stickMoveY(value, 1);
+            };
         }
     }
     else if(data[1] == CNTRL_ACTION_SET_TRIGGER){
         // MOVE LEFT TRIGGER VALUE
         if (data[2] == (uint8_t)0x00){
-            default_controller.pressTrigger(*reinterpret_cast<const int16_t*>(data + 3), 0);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.pressTrigger(value, 0);
+            };
         }
         // MOVE RIGHT TRIGGER VALUE
         else if (data[2] == (uint8_t)0x01){
-            default_controller.pressTrigger(*reinterpret_cast<const int16_t*>(data + 3), 1);
+            return [value = *reinterpret_cast<const int16_t*>(data + 3)](){
+                default_controller.pressTrigger(value, 1);
+            };
         }
     }
     // TO DO:
     // D-PAD
     // A-PAD
     
-    return 0;
+    return [](){ std::cout << "ERROR INVALID CONTROLLER REQUEST FOUND";};
 }
