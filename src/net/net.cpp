@@ -46,6 +46,7 @@ void run_process(int local_socket_fd){
     bool running_flag = true;   // I am in great pain but lazy to make a more elegant solution screw those few bits
 
     Executor local_executor;
+    // local_executor.changeMode(Executor::Mode::time_auto);
 
     while (running_flag){
         int client = accept(local_socket_fd, nullptr, nullptr);
@@ -113,7 +114,6 @@ void run_process(int local_socket_fd){
                 else{
                     // TO DO INVALID REPORTING
                 }
-                local_executor.execute();
             }
         }
         close(client);

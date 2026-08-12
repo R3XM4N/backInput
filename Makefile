@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude
+CXXFLAGS = -std=c++20 -Wall -Iinclude
 
 SRC = src/main.cpp src/device/*.cpp src/net/*.cpp src/debug/*.cpp src/core/*.cpp
 OUT = backInput
