@@ -3,7 +3,8 @@
 #include <linux/uinput.h>
 #include <unistd.h>
 
-void emit(int fd, int type, int code, int value){
+void VirtualDevice::emit(int fd, int type, int code, int value){
+    std::lock_guard<std::mutex> lock(m_safe_acc_mtx);
     struct input_event event{};
     event.type = type;
     event.code = code;

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include <ctime>
+#include <mutex>
 
 void loggingStart(){
     if (std::filesystem::exists(LOG_LOCATION_TEMP)){
