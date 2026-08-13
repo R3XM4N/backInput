@@ -40,7 +40,8 @@ int local_socket(std::string socket_fd_path){
 }
 
 void run_process(int local_socket_fd){
-    loggingStart();
+    LogManager::instance().log_start();
+    LogManager::instance().enable_cout(1);
 
     bool direct_mode = true;    // If executor is to bypassed
     bool running_flag = true;   // I am in great pain but lazy to make a more elegant solution screw those few bits
@@ -56,7 +57,7 @@ void run_process(int local_socket_fd){
             
             instruction_header recieved_header;
             if (!read_exact(client, &recieved_header, sizeof(instruction_header))){
-                logCharPtr((char*)"Intruction header has not been recieved fully. Murdering Client.");
+                LogManager::instance().write_log((char*)"Intruction header has not been recieved fully. Murdering Client.");
                 break;
             }
     
@@ -64,8 +65,7 @@ void run_process(int local_socket_fd){
             uint8_t i_length = std::to_integer<uint8_t>(recieved_header.instruction_length);
             
             if (i_type == 0 && i_length == 0){
-                logCharPtr((char*)"END SIGNAL RECIEVED");
-                std::cout << "END SIGNAL RECIEVED\n";
+                LogManager::instance().write_log((char*)"END SIGNAL RECIEVED");
                 running_flag = false;
                 break;
             }
@@ -73,16 +73,10 @@ void run_process(int local_socket_fd){
             uint8_t recieved_data[256];
             if (i_length > 0){
                 if (!read_exact(client, recieved_data, i_length)){
-                    logCharPtr((char*)"Intruction data has not been recieved fully. Proceeding with client murder.");
+                    LogManager::instance().write_log((char*)"Intruction data has not been recieved fully. Proceeding with client murder.");
                     break;
                 }   
             }
-            
-            // TO RE-ADD:
-            //     handleSystemRequest(buffer);
-            //     handleMouseRequest(buffer);
-            //     handleControllerRequest(buffer);
-            //     std::cout << "Error invalid type\n";
 
             if( i_type == 0x00){
                 // SYSTEM INSTRUCTIONS
@@ -118,5 +112,5 @@ void run_process(int local_socket_fd){
         }
         close(client);
     }
-    logStop();
+    LogManager::instance().log_stop();
 }

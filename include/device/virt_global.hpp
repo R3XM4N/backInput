@@ -16,6 +16,14 @@ protected:
     VirtualDevice() = default;
     void emit(int fd, int type, int code, int value);
 public:
+    enum class DeviceType{
+        INVALID_DEVICE,
+        KEYBOARD,
+        MOUSE,
+        CONTROLLER,
+        OTHER
+    };
+
     virtual ~VirtualDevice();
     // NO COPY 
     VirtualDevice(const VirtualDevice& other) = delete;
@@ -25,6 +33,11 @@ public:
     VirtualDevice& operator=(VirtualDevice&& other) noexcept;
 
     int getID() const { return m_id; }
+protected:
+    /// @brief The type of device this is
+    DeviceType m_dev_type = DeviceType::INVALID_DEVICE;
+public:
+    DeviceType getDevType() const { return m_dev_type;} // eyo the device can never change at least
 private:
 };
 

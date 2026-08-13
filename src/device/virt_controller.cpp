@@ -59,6 +59,8 @@ VirtualController::VirtualController(/* args */){
 
     ioctl(device_fd, UI_DEV_SETUP, &dev_setup);
     ioctl(device_fd, UI_DEV_CREATE);
+
+    m_dev_type = DeviceType::CONTROLLER;
 }
 
 VirtualController::~VirtualController(){

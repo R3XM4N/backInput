@@ -4,9 +4,36 @@
 #include <fstream>
 #include <filesystem>
 #include <ctime>
-#include <mutex>
 
-void loggingStart(){
+void LogManager::write_log(std::string text){
+    if (m_log_flag.load() == false){ return;}
+
+    std::lock_guard<std::mutex> lock(m_safe_acc_mtx);
+
+    if (std::filesystem::exists(LOG_LOCATION_TEMP)){
+        std::ofstream log(LOG_LOCATION_TEMP, std::ios::app);
+        if (log.is_open()){
+            time_t now = time(0);
+            log << "TIME: " << ctime(&now) << '\n';
+            log << text << '\n';
+            log.close();
+            if (m_print_cout){
+                std::cout << ctime(&now) << text << "\n";
+            }
+        }
+    }
+}
+void LogManager::write_log(std::string text, int number){
+    if (m_log_flag.load() == false){ return;}
+    write_log(text + std::to_string(number));
+}
+
+
+void LogManager::log_start(){
+    if (true ==  m_log_flag.load()){ return;}
+
+    std::lock_guard<std::mutex> lock(m_safe_acc_mtx);
+
     if (std::filesystem::exists(LOG_LOCATION_TEMP)){
         std::filesystem::remove(LOG_LOCATION_TEMP);
     }
@@ -15,58 +42,44 @@ void loggingStart(){
         time_t now = time(0);
         log << "LOG STARTED: " << ctime(&now) << '\n';
         log.close();
+        if (m_print_cout){
+            std::cout << ctime(&now) << " LOGGING STARTED\n";
+        }
     }
+
+    m_log_flag.store(true);
+}
+
+void LogManager::log_stop(){
+    if (false ==  m_log_flag.load()){ return;}
     
-}
+    std::lock_guard<std::mutex> lock(m_safe_acc_mtx);
 
-void logRecieved(char data[SOCKET_SIZE_WHOLE]){
-    if (std::filesystem::exists(LOG_LOCATION_TEMP)){
-        std::ofstream log(LOG_LOCATION_TEMP, std::ios::app);
-        if (log.is_open()){
-            time_t now = time(0);
-            log << "TIME: " << ctime(&now) << '\n';
-            log << "DATA RECIEVED START:\n";
-            log << "SYS HEADER:\n";
-            log << "Byte " << SYS_BYTE_POS_TYPE << " (TYPE):   [" << (int)data[SYS_BYTE_POS_TYPE]            << "]\n"; 
-            log << "Byte " << SYS_BYTE_POS_ID   << " (ID):     [" << (int)data[SYS_BYTE_POS_ID]              << "]\n";
-            log << "Byte " << SYS_BYTE_POS_2    << " (NONE 0): [" << (int)data[SYS_BYTE_POS_2]               << "]\n";
-            log << "Byte " << SYS_BYTE_POS_3    << " (NONE 1): [" << (int)data[SYS_BYTE_POS_3]               << "]\n";
-            log << "DEVICE HEADER:\n";
-            log << "Byte " << DEVICE_BYTE_POS_INPUT << " (INPUT T): [" << (int)data[DEVICE_BYTE_POS_INPUT]   << "]\n"; 
-            log << "Byte " << DEVICE_BYTE_POS_MOD   << " (ID):      [" << (int)data[DEVICE_BYTE_POS_MOD]     << "]\n";
-            log << "Byte " << DEVICE_BYTE_POS_TIME  << " (TIME):    [" << (int)data[DEVICE_BYTE_POS_TIME]    << "]\n";
-            log << "Byte " << DEVICE_BYTE_POS_7     << " (NONE 0):  [" << (int)data[DEVICE_BYTE_POS_7]       << "]\n";
-            log << "MESSAGE CONTENT:\n";
-            log << data + SOCKET_HEADER_SIZE << '\n';
-            log << "DATA RECIEVED END:\n";
-            log.close();
-        }
-    }
-}
-
-void logCharPtr(char* data){
-    if (std::filesystem::exists(LOG_LOCATION_TEMP)){
-        std::ofstream log(LOG_LOCATION_TEMP, std::ios::app);
-        if (log.is_open()){
-            time_t now = time(0);
-            log << "TIME: " << ctime(&now) << '\n';
-            log << data << '\n';
-            log.close();
-        }
-    }
-}
-
-void logStop(){
     if (std::filesystem::exists(LOG_LOCATION_TEMP)){
         std::ofstream log(LOG_LOCATION_TEMP, std::ios::app);
         if (log.is_open()){
             time_t now = time(0);
             log << "LOG ENDED: " << ctime(&now) << '\n';
             log.close();
+            if (m_print_cout){
+                std::cout << ctime(&now) << " LOGGING ENDED\n";
+            }
         }
     }
     if (std::filesystem::exists(LOG_LOCATION_TEMP)){
         std::filesystem::copy_file(LOG_LOCATION_TEMP, LOG_LOCATION_SAVED, std::filesystem::copy_options::overwrite_existing);
     }
-    
+
+    m_log_flag.store(false);
+}
+
+void LogManager::enable_cout(bool value){
+    std::lock_guard<std::mutex> lock(m_safe_acc_mtx); /// Is it here? Is it not? Well i guess theoretically you can access m_print_cout twice? What an absurd scenario!
+    if (value == m_print_cout) { return;}
+    m_print_cout = value;
+}
+
+LogManager& LogManager::instance(){
+    static LogManager logger;
+    return logger;
 }
